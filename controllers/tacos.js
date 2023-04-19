@@ -27,7 +27,43 @@ function create(req,res) {
   })
 }
 
+function show(req,res) {
+  Taco.findById(req.params.tacoId)
+  .populate('owner')
+  .then(taco => {
+    res.render('tacos/show', {
+      taco,
+      title: '🌮 show'
+    })
+  })
+  .catch(err => {
+    console.log(err);
+    res.redirect('/tacos')
+  })
+}
+
+function flipTasty(req,res) {
+  Taco.findByIdAndUpdate(req.params.tacoId)
+  .then(taco => {
+    taco.tasty = !taco.tasty
+    taco.save()
+    .then(() => {
+      res.redirect(`/tacos/${taco._id}`)
+    })
+    .catch(err => {
+      console.log(err);
+      res.redirect('/tacos')
+    })
+  })
+  .catch(err => {
+    console.log(err);
+    res.redirect('/tacos')
+  })
+}
+
 export {
   index,
   create,
+  show,
+  flipTasty
 }
